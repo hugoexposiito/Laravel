@@ -1,3 +1,4 @@
+
 name: deploy
 
 on:
@@ -9,7 +10,19 @@ jobs:
   deploy:
     name: Deploy to VPS
     runs-on: ubuntu-24.04
+
     steps:
+      - name: Check SSH secret
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        run: |
+          if [ -z "$SSH_PRIVATE_KEY" ]; then
+            echo "ERROR: PRIVATE_KEY no se ha recibido"
+            exit 1
+          else
+            echo "OK: PRIVATE_KEY se ha recibido"
+          fi
+
       - name: Deploy
         uses: appleboy/ssh-action@v1.2.5
         with:
@@ -17,4 +30,7 @@ jobs:
           port: 2222
           username: hugo
           key: ${{ secrets.PRIVATE_KEY }}
-          script: "set -eu; cd /var/www/html/Laravel; git pull --ff-only origin master; npm ci; npm run build;"
+          script: |
+            set -eu
+            cd /var/www/html/Laravel
+            git pull --ff-only origin master
