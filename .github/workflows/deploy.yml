@@ -10,6 +10,16 @@ jobs:
     name: Deploy to VPS
     runs-on: ubuntu-24.04
     steps:
+
+              - name: Check SSH secret
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        run: |
+          if [ -z "$SSH_PRIVATE_KEY" ]; then
+            echo "ERROR: PRIVATE_KEY está vacío o no está disponible"
+            exit 1
+          fi
+          echo "OK: PRIVATE_KEY está disponible"
       - name: Deploy
         uses: appleboy/ssh-action@v1.2.5
         with:
