@@ -1,17 +1,19 @@
+
 name: deploy
 
 on:
   push:
-    branches: [master]
+    branches:
+      - master
   workflow_dispatch:
 
 jobs:
   deploy:
     name: Deploy to VPS
     runs-on: ubuntu-24.04
-    steps:
 
-              - name: Check SSH secret
+    steps:
+      - name: Check SSH secret
         env:
           SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
         run: |
@@ -20,6 +22,7 @@ jobs:
             exit 1
           fi
           echo "OK: PRIVATE_KEY está disponible"
+
       - name: Deploy
         uses: appleboy/ssh-action@v1.2.5
         with:
@@ -27,4 +30,7 @@ jobs:
           port: 2222
           username: hugo
           key: ${{ secrets.PRIVATE_KEY }}
-          script: "set -eu; cd /var/www/html/Laravel; git pull --ff-only origin master; npm ci; npm run build;"
+          script: |
+            set -eu
+            cd /var/www/html/Laravel
+            git pull --ff-only origin master
