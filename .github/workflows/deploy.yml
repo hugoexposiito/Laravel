@@ -34,6 +34,4 @@ jobs:
             set -eu
             cd /var/www/html/Laravel
             git pull --ff-only origin master
-
-
-            
+            sudo /usr/sbin/service php8.5-fpm reload
